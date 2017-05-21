@@ -1,0 +1,55 @@
+<html>
+<body>
+<pre>
+    #*
+        注释~~~
+    *#
+    $!{value1} ##变量，从后台传进来的
+    $!{value2} ##!意味着如果变量不存在，强制为空
+    ${value3}  ##没有！且变量不存在就当做文本来解析
+
+    color:$!{color}
+    ##可以用for循环遍历,index是下标，count是计数，这是for循环自带信息
+    #foreach($colors in $color)
+        This is Color ：$!{foreach.index}, $colors,$!{foreach.count}
+    #end
+##可以使用java方法
+    #foreach($key in $map.keySet())
+        Number: $key, Value:$map.get($key)
+    #end
+
+     #foreach($kv in $map.entrySet())
+        Number: $kv.key, Value:$kv.value
+    #end
+    ##模板里面能显示变量的数据，或对象的属性，方法
+    ##当.name时，就会去找有没有get开头，或is开头的方法，直接调用方法也能成功
+    User : $!{user.name}
+    $!{user.description}
+    $!{user.getDescription()}
+
+    ##模板也能直接调用变量
+    #set($title = "nowcoder")
+    Title: $!{title}
+
+    ##模板语言也能引用其他文件
+    Parse: #parse("header.html") ##parse会解析变量
+    Include: #include("header.html") ##include是文本形式，若没有变量，使用include效率更高
+.
+    ##支持函数定义，macro，宏
+    #macro(render_color,$index, $colors)
+        Color Render Macro $index, $colors
+    #end
+    ##这里就像是调用函数一样，调用了rende_color，
+    #foreach($colors in $color)
+       #render_color($foreach.index,$colors)
+    #end
+
+    ##把字符串连接在一起
+    #set($hello= "hello")
+    #set($helloworld1= "$!{hello} world")
+    $!hello
+    $!{helloworld1}
+    $helloworld1
+</pre>
+</body>
+</html>
