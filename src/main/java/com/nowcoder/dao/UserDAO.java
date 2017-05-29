@@ -18,12 +18,16 @@ public interface UserDAO {
     String SELECT_FIELDS = " id, " + INSERT_FIELDS;
     //里面的headUrl不能写成head_url，因为读取的是User里面的字段
     @Insert({
-            "insert into", TABLE_NAME, "(",  INSERT_FIELDS, ") values(#{name}, #{password}, #{salt}, #{headUrl})"
+            "insert into", TABLE_NAME, "(", INSERT_FIELDS, ") values(#{name}, #{password}, #{salt}, #{headUrl})"
     })
     int addUser(User user);
 
     @Select({"select ", SELECT_FIELDS, " from ", TABLE_NAME, " where id=#{id}"})
     User selectById(int id);
+
+    //按照用户名查询
+    @Select({"select ", SELECT_FIELDS, " from ", TABLE_NAME, " where name=#{name}"})
+    User selectByName(String name);
 
     @Update({"update ", TABLE_NAME, " set password=#{password} where id=#{id}"})
     void updatePassword(User user);

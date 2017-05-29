@@ -27,7 +27,6 @@ import java.util.Objects;
  * 在调用indexController和SettingController之前都调用beforMethod方法，之后都调用afterMethod
  * 所以需要对切面的的@before和@after注解
  */
-
 public class LogAspect {
     private static final Logger logger =  LoggerFactory.getLogger(LogAspect.class);
     //* 返回值 xx.xx.xx 包 .xx 类 .* 方法 (..) 各种各样的参数
@@ -36,7 +35,9 @@ public class LogAspect {
     public void beforMethod(JoinPoint joinPoint){
         StringBuilder sb = new StringBuilder();
         for (Object arg : joinPoint.getArgs()){
-            sb.append("arg:" + arg.toString() + "|");
+            if (arg != null) {
+                sb.append("arg:" + arg.toString() + "|");
+            }
         }
         logger.info("befor method" + sb.toString());
 
@@ -46,5 +47,4 @@ public class LogAspect {
         logger.info("after method" + new Date());
 
     }
-
 }
