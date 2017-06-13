@@ -26,6 +26,10 @@ public class UserService {
     @Autowired
     private LoginTicketDAO loginTicketDAO;
 
+    public User selectByName(String name) {
+        return userDAO.selectByName(name);
+    }
+
     //这里返回值是map，是因为会有各种返回值，比如用户名被注册了等等，把返回值写在map中，如果成功就返回空
     public Map<String, String> register(String username, String password){
         System.out.println("*************controller register*******************");
