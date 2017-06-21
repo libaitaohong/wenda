@@ -1,5 +1,8 @@
 package com.nowcoder.controller;
 
+import com.nowcoder.async.EventModel;
+import com.nowcoder.async.EventProducer;
+import com.nowcoder.async.EventType;
 import com.nowcoder.service.UserService;
 import com.sun.deploy.net.HttpResponse;
 import org.apache.commons.lang.StringUtils;
@@ -30,6 +33,9 @@ public class LoginController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    EventProducer eventProducer;
+
     @RequestMapping(path = {"/reg/"}, method = {RequestMethod.POST})
     public String reg(Model model,
                         @RequestParam("username") String username,
@@ -37,9 +43,9 @@ public class LoginController {
                         @RequestParam(value = "next",required = false) String next,
                         HttpServletResponse response){
         try{
-            Map<String, String> map = userService.register(username, password);
+            Map<String, Object> map = userService.register(username, password);
             if (map.containsKey("ticket")){
-                Cookie cookie = new Cookie("ticket", map.get("ticket"));
+                Cookie cookie = new Cookie("ticket", map.get("ticket").toString());
                 cookie.setPath("/");
                 response.addCookie(cookie); //把cookie放到response里面，然后浏览器就会下发一个ticket
                 if (StringUtils.isNotBlank(next)) {
@@ -71,11 +77,17 @@ public class LoginController {
                         @RequestParam(value = "rememberme", defaultValue = "false") boolean rememberme,
                         HttpServletResponse response){
         try{
-            Map<String, String> map = userService.login(username, password);
+            Map<String, Object> map = userService.login(username, password);
             if (map.containsKey("ticket")){
-                Cookie cookie = new Cookie("ticket", map.get("ticket"));
+                Cookie cookie = new Cookie("ticket", map.get("ticket").toString());
                 cookie.setPath("/");
                 response.addCookie(cookie); //把cookie放到response里面，然后浏览器就会下发一个ticket
+
+                eventProducer.fireEvent(new EventModel(EventType.LOGIN)
+                        .setExt("username", username)
+                        .setExt("email", "492563822@qq.com")
+                        .setActorId((int)map.get("userId")));
+
                 if (StringUtils.isNotBlank(next)) {
                     return "redirect:" + next;
                 }

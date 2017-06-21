@@ -31,9 +31,9 @@ public class UserService {
     }
 
     //这里返回值是map，是因为会有各种返回值，比如用户名被注册了等等，把返回值写在map中，如果成功就返回空
-    public Map<String, String> register(String username, String password){
+    public Map<String, Object> register(String username, String password){
         System.out.println("*************controller register*******************");
-        Map<String,String> map = new HashMap<String, String>();
+        Map<String,Object> map = new HashMap<String, Object>();
         //StringUtil就是给String使用的工具类，类似还有ArrayUtil
         if (StringUtils.isBlank(username)){ //如果用户名为空
             map.put("msg", "用户名不能为空");
@@ -65,8 +65,8 @@ public class UserService {
     }
 
     //登录
-    public Map<String, String> login(String username, String password){
-        Map<String,String> map = new HashMap<String, String>();
+    public Map<String, Object> login(String username, String password){
+        Map<String,Object> map = new HashMap<String, Object>();
         //StringUtil就是给String使用的工具类，类似还有ArrayUtil
         if (StringUtils.isBlank(username)){ //如果用户名为空
             map.put("msg", "用户名不能为空");
@@ -89,6 +89,7 @@ public class UserService {
         //登录成功后
         String ticket = addLoginTicket(user.getId());
         map.put("ticket",ticket);
+        map.put("userId", user.getId());
         return map;
     }
 
