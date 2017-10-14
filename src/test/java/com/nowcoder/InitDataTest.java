@@ -2,8 +2,11 @@ package com.nowcoder;
 
 import com.nowcoder.dao.QuestionDAO;
 import com.nowcoder.dao.UserDAO;
+import com.nowcoder.model.EntityType;
 import com.nowcoder.model.Question;
 import com.nowcoder.model.User;
+import com.nowcoder.service.FollowService;
+import com.nowcoder.util.JedisAdapter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,16 +28,28 @@ public class InitDataTest {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     QuestionDAO questionDAO;
+
+    @Autowired
+    FollowService followService;
+
+    @Autowired
+    JedisAdapter jedisAdapter;
+
+
 	@Test
 	public void initDatabase() {
         Random random = new Random();
-        for (int i = 0; i < 11; i++) {
-            User user = new User();
+        for (int i = 0; i < 17; i++) {
+            /*User user = new User();
             user.setHeadUrl(String.format("http://images.nowcoder.com/head/%dt.png", random.nextInt(1000)));
             user.setName(String.format("USER%d", i));
             user.setPassword("");
             user.setSalt("");
-            userDAO.addUser(user);
+            userDAO.addUser(user);*/
+            //互相关注
+            for (int j = 1; j < i; ++j) {
+                followService.follow(j, EntityType.ENTITY_USER, i);
+            }
 
             Question question = new Question();
             question.setCommentCount(i);
@@ -47,9 +62,11 @@ public class InitDataTest {
 
             questionDAO.addQuestion(question);
         }
-        Assert.assertEquals("newpassword", userDAO.selectById(1).getPassword());
+        //Assert.assertEquals("newpassword", userDAO.selectById(1).getPassword());
         userDAO.deleteById(1);
         Assert.assertNull(userDAO.selectById(1));
         System.out.println(questionDAO.selectLatestQuestions(0,0,10));
+
+
     }
 }
